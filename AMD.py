@@ -3,7 +3,7 @@ from scipy.optimize import curve_fit
 import numpy as np
 import matplotlib.pyplot as plt
 
-# THIS IS ANOTHER TEST!
+# THIS IS ANOTHER TEST! once again, a test
 
 def fit_all(src, function):
 	errors = []

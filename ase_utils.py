@@ -5,6 +5,7 @@ import networkx as nx
 from scipy.spatial.distance import cdist
 import time
 
+
 def read_cif_files(directory, progress_bar=True):
     """
     yields atoms objects and filenames of all .cif files in directory
@@ -73,7 +74,7 @@ def find_bonds(p1, s1, p2=None, s2=None, bool=False):
     :param p1: np array of atoms positions (acceptable from ase.Atoms.get_positions())
     :param s1: list of p1's chemical symbols
     :param p2: optional np array of positions. if given only find bonds between p1 and p2
-    :param s2: optional list of p2's symbols 
+    :param s2: optional list of p2's symbols
     :param bool: if True, return any bond if found otherwise return False. if False, return list of bonds found.
     :return: list of tuples [(i,j),...] where i and j are indices of bonded atoms.
     """
@@ -136,8 +137,8 @@ def get_component_centers(atoms, unwrap=False):
 def unwrap_atoms_from_cell(atoms, wrap_centers_into_cell=False):
     """
     :param atoms: Atoms object to unwrap
-    :return: 'unwrapped' Atoms object, with atomic positions moved to more 'natural' positions outside 
-            the unit cell (finding where there are chemical bonds chopped by wrapping into the cell) 
+    :return: 'unwrapped' Atoms object, with atomic positions moved to more 'natural' positions outside
+            the unit cell (finding where there are chemical bonds chopped by wrapping into the cell)
     This gives wholly connected molecules instead of having some atoms wrapped inside the unit cell.
     """
     # collection of possible directions to translate by

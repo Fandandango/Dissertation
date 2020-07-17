@@ -35,12 +35,12 @@ def draw_cell(cell, ax):
     	draw_line(corner, c4, ax)
 
 def draw(atoms, ax, draw_atoms=True,
-                    draw_bonds=True, 
-                    draw_unit_cell=True, 
-                    draw_centers=False, 
+                    draw_bonds=True,
+                    draw_unit_cell=True,
+                    draw_centers=False,
                     unwrap=True):
     """
-    UPDATE FUNCTION
+    update func
     :param atoms: Atoms object or str of a .cif filename.
     draw atoms object to ax. Optionally draw chemical bonds, unit cell, or unwrap atoms
     from the unit cell (see unwrap_atoms_from_cell() for explanation of unwrapping).
@@ -54,7 +54,7 @@ def draw(atoms, ax, draw_atoms=True,
     positions = atoms.get_positions()
     symbols = atoms.get_chemical_symbols()
 
-    if draw_centers: 
+    if draw_centers:
         points = ase_utils.get_component_centers(atoms)
         ax.scatter(points[:,0], points[:,1], points[:,2], s=70)
 
@@ -91,7 +91,7 @@ def draw(atoms, ax, draw_atoms=True,
         ax.scatter(positions[:,0], positions[:,1], positions[:,2], c=colour_list, s=30, alpha=1)
 
 def draw_each_component(atoms, draw_atoms=True,
-                        draw_bonds=True, 
+                        draw_bonds=True,
                         draw_unit_cell=True,
                         unwrap=True):
 
@@ -127,22 +127,22 @@ def draw_each_component(atoms, draw_atoms=True,
                         if o < 1 and o_ < 1:
                             linestyle= 'dashed'
 
-                    draw_line(position, position_, ax, 
+                    draw_line(position, position_, ax,
                         linewidth=2, linestyle=linestyle)
 
         if draw_atoms:
             colours = {
                 "H":  '#B8B8B8',
-                "C":  "#585858",
+                "C":  '#585858',
                 "N":  'c',
                 "O":  'r',
                 "P":  'm',
                 "S":  'g'
             }
             colour_list = [colours[s] for i,s in enumerate(symbols) if i in component]
-            ax.scatter(positions[:,0][component], 
-                positions[:,1][component], 
-                positions[:,2][component], 
+            ax.scatter(positions[:,0][component],
+                positions[:,1][component],
+                positions[:,2][component],
                 c=colour_list, s=90, alpha=1)
         plt.show()
         plt.close()
@@ -158,7 +158,7 @@ EXPERIMENTS
 
 #     if draw_unit_cell: draw_cell(atoms.get_cell(), ax)
 
-#     if draw_centers: 
+#     if draw_centers:
 #         points = np.array(ase_utils.get_component_centers(atoms))
 #         ax.scatter(points[:,0], points[:,1], points[:,2], s=70)
 
@@ -184,7 +184,7 @@ def draw_normals(atoms, ax):
 if __name__ == "__main__":
     # import warnings
     # warnings.filterwarnings("ignore")
-    CIF_DIRECTORY = "CIFs/"
+    CIF_DIRECTORY = "cifs/Large_T2_set/"
     # "job_03351.cif" simplest crystal
     # "job_06871.cif" largest volume
     # "job_06467.cif" most atoms
@@ -226,8 +226,8 @@ if __name__ == "__main__":
     # plt.show()
 
 # Counter({8: 2201, 4: 1329, 6: 643, 12: 633, 16: 543, 2: 226, 24: 49, 36: 20, 3: 14, 5: 10, 9: 3, 13: 3, 10: 2, 1: 1, 18: 1, 32: 1})
-# {'job_00254.cif': 5, 'job_00383.cif': 3, 'job_00573.cif': 10, 'job_00680.cif': 5, 'job_01243.cif': 3, 'job_01577.cif': 3, 'job_01649.cif': 5, 
-# 'job_01752.cif': 5, 'job_02188.cif': 5, 'job_02675.cif': 3, 'job_03094.cif': 3, 'job_03135.cif': 5, 'job_03250.cif': 32, 'job_03869.cif': 5, 
-# 'job_04004.cif': 10, 'job_04109.cif': 3, 'job_04907.cif': 5, 'job_05188.cif': 9, 'job_05275.cif': 3, 'job_05453.cif': 3, 'job_05466.cif': 3, 
-# 'job_05475.cif': 5, 'job_05658.cif': 3, 'job_05677.cif': 3, 'job_05710.cif': 3, 'job_05786.cif': 3, 'job_05805.cif': 3, 'job_05860.cif': 5, 
+# {'job_00254.cif': 5, 'job_00383.cif': 3, 'job_00573.cif': 10, 'job_00680.cif': 5, 'job_01243.cif': 3, 'job_01577.cif': 3, 'job_01649.cif': 5,
+# 'job_01752.cif': 5, 'job_02188.cif': 5, 'job_02675.cif': 3, 'job_03094.cif': 3, 'job_03135.cif': 5, 'job_03250.cif': 32, 'job_03869.cif': 5,
+# 'job_04004.cif': 10, 'job_04109.cif': 3, 'job_04907.cif': 5, 'job_05188.cif': 9, 'job_05275.cif': 3, 'job_05453.cif': 3, 'job_05466.cif': 3,
+# 'job_05475.cif': 5, 'job_05658.cif': 3, 'job_05677.cif': 3, 'job_05710.cif': 3, 'job_05786.cif': 3, 'job_05805.cif': 3, 'job_05860.cif': 5,
 # 'job_05908.cif': 9, 'job_05909.cif': 9, 'job_06315.cif': 18, 'job_06633.cif': 13, 'job_06771.cif': 13, 'job_06956.cif': 13}

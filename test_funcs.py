@@ -10,3 +10,6 @@ def n(x, param):
 	x[x == 0] = 1e-8
 	x[np.log(x) == 0] = 1e-8
 	return np.log(np.log(param * x))
+
+def my_rt(x, param):
+	return np.power(param * x, 1/3)

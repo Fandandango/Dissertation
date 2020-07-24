@@ -1,11 +1,12 @@
 from ase.io import read
 import os
 import numpy as np
-import ase_utils
+import ase_tools
 import ase_plotter
 import ase
+
 def fit_plane(atoms):
-	atoms = ase_utils.unwrap_atoms_from_cell(atoms)
+	atoms = ase_tools.unwrap_atoms_from_cell(atoms)
 	points = atoms.get_positions()
 	points = np.transpose(points)
 	points = np.transpose(np.transpose(points) - np.sum(points,1) / len(np.transpose(points))) # subtract out the centroid
@@ -18,7 +19,7 @@ def compare_centers(atoms, eps=np.float32(1e-5)):
 	positions = atoms.get_positions()
 	cell = atoms.get_cell()
 	cart_to_fract = np.linalg.inv(cell.array)	# change of basis matrix
-	centers = ase_utils.get_component_centers(atoms, unwrap=True)
+	centers = ase_tools.get_component_centers(atoms, unwrap=True)
 	scaled_centers = np.matmul(centers, cart_to_fract)
 	pairs = []
 	for i, c in enumerate(scaled_centers):

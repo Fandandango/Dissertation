@@ -166,11 +166,11 @@ def plot_errors(src, range):
 	plt.show()
 
 if __name__ == '__main__':
-	from test_funcs import my_rt
+	from test_functions import my_rt
 	filename = "T2L_Energy_Density_AMDs1000_CLEAN.csv"
 	src = os.path.join("Data", filename)
-	# plot_all_actual_and_fitted(src, test_funcs.my_rt)
-	# plot_one_actual_and_fitted(src, test_funcs.my_rt, "job_00721")
+	# plot_all_actual_and_fitted(src, test_functions.my_rt)
+	# plot_one_actual_and_fitted(src, test_functions.my_rt, "job_00721")
 	d = fit_all(src, my_rt)
 	print(d)
 	# print(find_const(src))

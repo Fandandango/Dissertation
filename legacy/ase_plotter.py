@@ -16,7 +16,6 @@ def draw_line(p1, p2, ax, linewidth=1, linestyle='solid'):
     y = np.linspace(p1[1], p2[1], 100)
     z = np.linspace(p1[2], p2[2], 100)
     ax.plot(x, y, z, c='k', linewidth=linewidth, linestyle=linestyle)
-    # linestyle='dashed'
 
 def draw_cell(cell, ax):
     """
@@ -190,7 +189,6 @@ if __name__ == "__main__":
     # "job_06467.cif" most atoms
     atoms = read(os.path.join(CIF_DIRECTORY, "job_03154.cif"),
                 fractional_occupancies=True)
-    # atoms.edit()
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     draw(atoms, ax, draw_centers=True)

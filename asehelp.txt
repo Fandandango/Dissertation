@@ -40,14 +40,14 @@ funcs
     get_chemical_symbols(self):
         get list of chemical symbol strings.
 
-    get_positions(self):
+    get_positions(self, wrap=False):
         get ndarray of positions of atoms in Cartesian coords.
 
-    get_scaled_positions(self):
+    get_scaled_positions(self, wrap=True):
         get positions of atoms relative to unit cell.
 
     get_volume(self):
         get volume of unit cell.
 
     edit(self):
-        visualise and edit Atoms object with GUI.
+        visualise and edit Atoms object with a GUI.

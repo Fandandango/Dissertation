@@ -1,5 +1,5 @@
 import csv
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit, minimize
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -10,7 +10,35 @@ def fit_all(src, function):
 	with open(src) as f:
 		reader = csv.reader(f)
 		next(reader)
-		for line in reader:
+		import progressbar
+		for line in progressbar.progressbar(reader):
+			names.append(line[0])
+			y = [float(i) for i in line[3:]]
+			n = len(y)
+			xdata = np.linspace(1, n, n)
+			ydata = np.array(y, dtype=np.float64)
+			try:
+				param_opt, _ = curve_fit(function, xdata, ydata, maxfev=100000000)
+			except RuntimeError:
+				print("runtime error...")
+				continue
+			# print(param_opt)
+			errors.append(np.sum(np.square(ydata - function(xdata, *param_opt))) / n)
+	arg_max = np.argmax(errors)
+	arg_min = np.argmin(errors)
+	av_err  = sum(errors) / len(errors)
+	min_max_dict = {names[arg_min] : errors[arg_min], names[arg_max] : errors[arg_max]}
+	return min_max_dict, av_err
+
+
+def fit_all_and_consts(src, function):
+	errors = []
+	names = []
+	with open(src) as f:
+		reader = csv.reader(f)
+		next(reader)
+		import progressbar
+		for line in progressbar.progressbar(reader):
 			names.append(line[0])
 			y = [float(i) for i in line[3:]]
 			n = len(y)
@@ -20,29 +48,11 @@ def fit_all(src, function):
 			errors.append(np.sum(np.square(ydata - function(xdata, *param_opt))) / n)
 	arg_max = np.argmax(errors)
 	arg_min = np.argmin(errors)
-	min_err = errors[arg_min]
-	max_err = errors[arg_max]
 	av_err  = sum(errors) / len(errors)
-	min_max_dict = {names[arg_min] : min_err, names[arg_max] : max_err}
+	min_max_dict = {names[arg_min] : errors[arg_min], names[arg_max] : errors[arg_max]}
 	return min_max_dict, av_err
 
-def plot_all_actual_and_fitted(src, function):
-	with open(src) as f:
-		reader = csv.reader(f)
-		next(reader)
-		for line in reader:
-			y = [float(i) for i in line[3:]]
-			n = len(y)
-			xdata = np.linspace(1, n, n)
-			ydata = np.array(y, dtype=np.float64)
-			param_opt, _ = curve_fit(function, xdata, ydata)
-			plt.plot(ydata, label='actual')
-			plt.plot(function(xdata, *param_opt), label='fitted')
-			plt.legend()
-			plt.show()
-			plt.close()
-
-def plot_actual_and_fitted(src, function, job_name):
+def plot_one_actual_and_fitted(src, function, job_name):
 	with open(src) as f:
 		reader = csv.reader(f)
 		next(reader)
@@ -60,6 +70,22 @@ def plot_actual_and_fitted(src, function, job_name):
 				plt.close()
 				break
 
+def plot_all_actual_and_fitted(src, function):
+	with open(src) as f:
+		reader = csv.reader(f)
+		next(reader)
+		for line in reader:
+			y = [float(i) for i in line[3:]]
+			n = len(y)
+			xdata = np.linspace(1, n, n)
+			ydata = np.array(y, dtype=np.float64)
+			param_opt, _ = curve_fit(function, xdata, ydata)
+			plt.plot(ydata, label='actual')
+			plt.plot(function(xdata, *param_opt), label='fitted')
+			plt.legend()
+			plt.show()
+			plt.close()
+
 def plot_est_derivative(src, job_name):
 	with open(src) as f:
 		reader = csv.reader(f)
@@ -74,29 +100,77 @@ def plot_est_derivative(src, job_name):
 				plt.close()
 				break
 
+def find_const(src):
+	import csv
+	amds = []
+	with open(src) as f:
+		reader = csv.reader(f)
+		next(reader)
+		for line in reader:
+			amds.append([float(i) for i in line[3:]])
+	amds = np.array(amds, dtype=np.float64)
+	n = amds.shape[1]
+	xdata = np.linspace(1, n, n)
+
+	# import progressbar
+	def outer_f(const):
+		# def f(x, p1, p2, p3):
+		# 	a = p2 + p1 * x
+		# 	return p3 + np.sign(a) * (np.abs(a)) ** const
+		def f(x, p1):
+			a = p1 * x
+			return np.sign(a) * (np.abs(a)) ** const
+		e = []
+		for amd in amds:
+			param_opt, _ = curve_fit(f, xdata, amd)
+			e.append(np.sum(np.square(amd - f(xdata, *param_opt))) / n)
+		av_err = sum(e) / len(e)
+		print("c:", const, "e:", av_err)
+		return av_err
+
+	return minimize(outer_f, 0.35)
+
+def plot_errors(src, range):
+	import csv
+	amds = []
+	with open(src) as f:
+		reader = csv.reader(f)
+		next(reader)
+		for line in reader:
+			amds.append([float(i) for i in line[3:]])
+	amds = np.array(amds, dtype=np.float64)
+	n = amds.shape[1]
+	xdata = np.linspace(1, n, n)
+
+	def outer_f(const):
+		# def f(x, p1, p2, p3):
+		# 	a = p2 + p1 * x
+		# 	return p3 + np.sign(a) * (np.abs(a)) ** const
+		def f(x, p1):
+			a = p1 * x
+			return const + np.sign(a) * (np.abs(a)) ** (1/3)
+		e = []
+		for amd in amds:
+			param_opt, _ = curve_fit(f, xdata, amd)
+			e.append(np.sum(np.square(amd - f(xdata, *param_opt))) / n)
+		av_err = sum(e) / len(e)
+		# print("c:", const, "e:", av_err)
+		return av_err
+	errors = []
+	constants = np.linspace(range[0], range[1], 20)
+	import progressbar
+	for const in progressbar.progressbar(constants):
+		errors.append(outer_f(const))
+
+	plt.plot(constants, errors)
+	plt.show()
+
 if __name__ == '__main__':
-	import test_funcs
-
+	from test_funcs import my_rt
 	filename = "T2L_Energy_Density_AMDs1000_CLEAN.csv"
-	d = fit_all(os.path.join("Data", filename), test_funcs.my_rt)
+	src = os.path.join("Data", filename)
+	# plot_all_actual_and_fitted(src, test_funcs.my_rt)
+	# plot_one_actual_and_fitted(src, test_funcs.my_rt, "job_00721")
+	d = fit_all(src, my_rt)
 	print(d)
-	# src = os.path.join("Data", filename)
-	# fig = plt.figure()
-	# ax = fig.add_subplot()
-	# with open(src) as f:
-	# 	reader = csv.reader(f)
-	# 	next(reader)
-	# 	for _ in range(6):
-	# 		for _ in range(500):
-	# 			next(reader)
-	# 		line = next(reader)
-	# 		y = [float(i) for i in line[3:]]
-	# 		ax.plot(y)
-	# ax.set_ylabel("AMD_k")
-	# ax.set_xlabel("k")
-	# plt.show()
-	# plt.close()
-
-	# plot_actual_and_fitted(filename, test_funcs.log_base, "job_03168")
-	# print(fit_all(filename, test_funcs.n))
-	# plot_est_derivative(filename, "job_07107")
+	# print(find_const(src))
